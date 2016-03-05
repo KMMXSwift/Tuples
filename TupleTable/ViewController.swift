@@ -8,11 +8,34 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-
-    override func viewDidLoad() {
+class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate
+{
+    var tuples: [(field: String, value: String)] = []
+    
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        tuples.append(("Marca", "Porsche"))
+        tuples.append(("Auto", "Cayman"))
+        tuples.append(("Modelo", "2007"))
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    {
+        let cell = tableView.dequeueReusableCellWithIdentifier("TupleCell")!
+        
+        let tuple = tuples[indexPath.row]
+        
+        cell.textLabel?.text = tuple.field
+        cell.detailTextLabel?.text = tuple.value
+        
+        return cell
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        return tuples.count
     }
 
     override func didReceiveMemoryWarning() {
@@ -22,4 +45,3 @@ class ViewController: UIViewController {
 
 
 }
-
