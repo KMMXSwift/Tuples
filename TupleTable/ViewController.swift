@@ -8,27 +8,30 @@
 
 import UIKit
 
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate
+class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, FavoriteViewControllerDelegate
 {
-    var tuples: [(field: String, value: String)] = []
+    var tuples: [(field: String, value: String, favorite: Bool)] = []
+    
+    @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
+    tuples.append(("MarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarcaMarca", "Porsche", false))
+        tuples.append(("Auto", "Cayman", false))
+        tuples.append(("Modelo", "2007", false))
         
-        tuples.append(("Marca", "Porsche"))
-        tuples.append(("Auto", "Cayman"))
-        tuples.append(("Modelo", "2007"))
+        tableView.estimatedRowHeight = 100.0
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        let cell = tableView.dequeueReusableCellWithIdentifier("TupleCell")!
+        let cell = tableView.dequeueReusableCellWithIdentifier("TupleCell") as! TupleTableViewCell
         
         let tuple = tuples[indexPath.row]
         
-        cell.textLabel?.text = tuple.field
-        cell.detailTextLabel?.text = tuple.value
+        cell.label.text = tuple.field
+        cell.accessoryType = (tuple.favorite) ? UITableViewCellAccessoryType.Checkmark : UITableViewCellAccessoryType.None
         
         return cell
     }
@@ -36,6 +39,30 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         return tuples.count
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
+    {
+        if (segue.identifier == "FavoriteSegue")
+        {
+            if let indexPath = tableView.indexPathForSelectedRow
+            {
+                let tuple = tuples[indexPath.row]
+                
+                let vc = segue.destinationViewController as! FavoriteViewController
+                vc.tuple = tuple
+                vc.indexPath = indexPath
+                vc.delegate = self
+            }
+        }
+    }
+    
+    func didEditTuple(tuple: (field: String, value: String, favorite: Bool), indexPath: NSIndexPath)
+    {
+        tuples[indexPath.row] = tuple
+        tableView.reloadData()
+        
+        //Save core data
     }
 
     override func didReceiveMemoryWarning() {
